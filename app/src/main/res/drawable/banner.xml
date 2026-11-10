@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <path android:fillColor="#0E1726" android:pathData="M0,0h320v180h-320z" />
+    <!-- Haus -->
+    <path android:fillColor="#4FA3FF" android:pathData="M160,38 L218,88 L204,88 L204,140 L116,140 L116,88 L102,88 Z" />
+    <path android:fillColor="#0E1726" android:pathData="M148,104h24v36h-24z" />
+    <!-- Ambilight-Andeutung -->
+    <path android:fillColor="#334FA3FF" android:pathData="M60,150h200v6h-200z" />
+</vector>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Startseite</string>
+    <string name="dienst_name">Startseite – Tasten &amp; Aufwachen</string>
+    <string name="dienst_beschreibung">Belegt Fernbedienungstasten um, holt nach dem Standby die eigene Startseite nach vorn und ersetzt die Original-Startseite. Liest keine Bildschirminhalte.</string>
+</resources>

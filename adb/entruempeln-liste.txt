@@ -1,0 +1,11 @@
+# Pakete, die entruempeln.sh deaktivieren soll – eins pro Zeile.
+# Absichtlich noch leer: erst backup.sh laufen lassen, Liste gemeinsam durchsehen
+# (Phase 2), dann hier eintragen. Geschützte Pakete (Ambilight, HDMI, Quellen,
+# CEC, Einstellungen, Play Store …) werden vom Skript ohnehin übersprungen.
+#
+# Typische Kandidaten auf Philips/Google-TV (NUR nach Prüfung einkommentieren):
+# com.google.android.tvrecommendations   # Empfehlungs-Kanäle
+# com.google.android.leanbacklauncher.recommendations
+# com.google.android.feedback
+# com.google.android.marvin.talkback     # nur falls nie gebraucht
+# org.droidtv.nettvadvert                # Philips-Werbung (Name prüfen!)

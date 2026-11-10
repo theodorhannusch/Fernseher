@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="hintergrund">#FF05070C</color>
+    <style name="Thema" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <item name="android:windowBackground">@color/hintergrund</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>
