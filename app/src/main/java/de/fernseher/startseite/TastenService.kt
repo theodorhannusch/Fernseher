@@ -143,7 +143,10 @@ class TastenService : AccessibilityService() {
 
     override fun onKeyEvent(event: KeyEvent): Boolean {
         KeyLog.melden(event, KeyLog.QUELLE_DIENST)
-        if (KeyLog.durchlassen) return false
+        if (KeyLog.durchlassen) {
+            // Im Tasten-Test/bei der Aufnahme Home festhalten, damit der Test nicht verlassen wird.
+            return event.keyCode == KeyEvent.KEYCODE_HOME
+        }
         val karte = belegungen[event.keyCode] ?: return false
         return verarbeiten(event, karte)
     }

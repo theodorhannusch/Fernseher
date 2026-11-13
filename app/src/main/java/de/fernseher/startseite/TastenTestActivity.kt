@@ -21,7 +21,8 @@ class TastenTestActivity : Activity() {
 
     private val gesehen = LinkedHashMap<Int, Info>()
     private val verlauf = ArrayDeque<String>()
-    private lateinit var tabelle: TextView
+    private val tabellen = ArrayList<TextView>()
+    private lateinit var fehlend: TextView
     private lateinit var protokoll: TextView
     private lateinit var status: TextView
     private val zeit = SimpleDateFormat("HH:mm:ss", Locale.GERMANY)
@@ -46,10 +47,15 @@ class TastenTestActivity : Activity() {
         wurzel.addView(status)
 
         val spalten = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        tabelle = text("", 16f).apply { typeface = android.graphics.Typeface.MONOSPACE }
-        protokoll = text("", 14f, Farben.TEXT_LEISE).apply { typeface = android.graphics.Typeface.MONOSPACE }
-        spalten.addView(ScrollView(this).apply { addView(tabelle) }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 3f))
-        spalten.addView(ScrollView(this).apply { addView(protokoll) }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 2f))
+        fehlend = text("", 15f, Farben.WARNUNG).apply { setPadding(0, 0, 0, dp(8)) }
+        wurzel.addView(fehlend)
+        repeat(SPALTEN) {
+            val t = text("", 13f).apply { typeface = android.graphics.Typeface.MONOSPACE }
+            tabellen += t
+            spalten.addView(t, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f))
+        }
+        protokoll = text("", 12f, Farben.TEXT_LEISE).apply { typeface = android.graphics.Typeface.MONOSPACE }
+        spalten.addView(ScrollView(this).apply { addView(protokoll) }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 0.8f))
         wurzel.addView(spalten, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f))
         setContentView(wurzel)
         anzeigen()
@@ -94,19 +100,37 @@ class TastenTestActivity : Activity() {
     }
 
     private fun anzeigen() {
-        val sb = StringBuilder()
-        sb.append("Taste                     Code  Scan  Dienst  App\n")
-        sb.append("────────────────────────────────────────────────\n")
-        for (i in gesehen.values) {
-            sb.append(tastenName(i.keyCode).take(24).padEnd(25))
-            sb.append(i.keyCode.toString().padStart(5))
-            sb.append(i.scanCode.toString().padStart(6))
-            sb.append((if (i.dienst) "✓" else "–").padStart(6))
-            sb.append((if (i.app) "✓" else "–").padStart(6))
-            sb.append('\n')
+        // Alle Tasten in mehreren Spalten, damit ein Foto genügt.
+        val zeilen = gesehen.values.map { i ->
+            tastenName(i.keyCode).take(16).padEnd(17) +
+                i.keyCode.toString().padStart(4) + "  " +
+                (if (i.dienst) "✓" else "–") + " " + (if (i.app) "✓" else "–")
         }
-        if (gesehen.isEmpty()) sb.append("(noch keine Taste gedrückt)\n")
-        tabelle.text = sb
-        protokoll.text = verlauf.joinToString("\n")
+        val kopf = "Taste            Code  D A\n"
+        val proSpalte = maxOf(1, (zeilen.size + SPALTEN - 1) / SPALTEN)
+        tabellen.forEachIndexed { n, t ->
+            val teil = zeilen.drop(n * proSpalte).take(proSpalte)
+            t.text = if (teil.isEmpty() && n > 0) "" else kopf + teil.joinToString("\n").ifEmpty { "(noch keine Taste)" }
+        }
+        val fehlt = ERWARTET.filter { (codes, _) -> codes.none { it in gesehen } }.map { it.second }
+        fehlend.text = if (fehlt.isEmpty()) "Alle typischen Tasten wurden erkannt." else
+            "Nicht erkannt (drücken – erscheint sie nicht, fängt Philips sie ab): " + fehlt.joinToString(", ")
+        protokoll.text = verlauf.take(20).joinToString("\n")
+    }
+
+    companion object {
+        private const val SPALTEN = 3
+
+        /** Tasten, die fast jede Fernbedienung hat – zum Abhaken. */
+        private val ERWARTET = listOf(
+            listOf(KeyEvent.KEYCODE_HOME) to "Home",
+            listOf(KeyEvent.KEYCODE_POWER, KeyEvent.KEYCODE_TV_POWER) to "Power",
+            listOf(KeyEvent.KEYCODE_VOLUME_UP) to "Lauter",
+            listOf(KeyEvent.KEYCODE_VOLUME_DOWN) to "Leiser",
+            listOf(KeyEvent.KEYCODE_TV_INPUT) to "Quelle/Source",
+            listOf(KeyEvent.KEYCODE_SETTINGS) to "Einstellungen",
+            listOf(KeyEvent.KEYCODE_INFO) to "Info",
+            listOf(KeyEvent.KEYCODE_SEARCH, KeyEvent.KEYCODE_ASSIST, KeyEvent.KEYCODE_VOICE_ASSIST) to "Mikrofon",
+        )
     }
 }
